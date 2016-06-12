@@ -91,7 +91,7 @@ view_nii(b1v)
 save tmp22
 bwvol.img=interp3(double(b1vol.img),X+reshape(diffmap(:,2),SZ),Y+reshape(diffmap(:,1),SZ),Z+reshape(diffmap(:,3),SZ));
 bwvol.hdr=b2vol.hdr;
-save_nii(bwvol,[bone1vol(1:end-4),'_warped','.nii.gz']);
+save_nii(bwvol,[bone1vol(1:end-7),'_warped','.nii.gz']);
 
 b2volo=load_untouch_nii_gz(bone2vol);b2labo=load_untouch_nii_gz(bone2);
 b1volo=load_untouch_nii_gz(bone1vol);b1labo=load_untouch_nii_gz(bone1);
@@ -106,12 +106,32 @@ ymap=ymap*size(b1volo.img,1)/SZ(1);
 zmap=zmap*size(b1volo.img,3)/SZ(3);
 
 
+bwvol=b2volo;
 bwvol.img=interp3(double(b1volo.img),xmap,ymap,zmap);
-bwvol.hdr=b2volo.hdr;
-save_nii(bwvol,[bone1vol(1:end-7),'_warped','.nii.gz']);
+save_untouch_nii_gz(bwvol,[bone1vol(1:end-7),'_warped','.nii.gz']);
 
+bwlab=b2labo;
 bwlab.img=interp3(double(b1labo.img),xmap,ymap,zmap,'nearest');
-bwlab.hdr=b2labo.hdr;
-save_nii(bwlab,[bone1(1:end-7),'_warped','.nii.gz']);
+save_untouch_nii_gz(bwlab,[bone1(1:end-7),'_warped','.nii.gz']);
 
+Op.Registration='NonRigid';
+%Op.SigmaDiff=1*16;
+Op.SigmaFluid=4*8; %4*8 was best
+Op.Similarity='p';
+save tmp1233
+bwvol.img(isnan(bwvol.img(:)))=0;
+[Ireg,map]=register_demons_hires(bwvol,b2volo,Op);
+
+
+%save tmp1
+save_untouch_nii_gz(Ireg,[bone1(1:end-7),'_warped_intensity','.nii.gz']);
+
+
+
+v_moving_lab=load_nii_BIG_Lab('C:\Users\ajoshi\Google Drive\Downloads_04_26_2016\WHS_SD_rat_atlas_v2_pack\WHS_SD_rat_atlas_v2_pack\WHS_SD_rat_atlas_v2.nii.gz');
+
+Ireg.img=interp3(double(v_moving_lab.img),map(:,:,:,1),map(:,:,:,2),map(:,:,:,3),'nearest');
+Ireg.hdr.dime.bitpix = 16;
+Ireg.hdr.dime.datatype = 4;
+save_untouch_nii_gz(Ireg,'E:\sipi_data\CMGI-Joshi\CMGI-Joshi\Rat HighRes\warped_atlas.hlabel.nii.gz');
 
