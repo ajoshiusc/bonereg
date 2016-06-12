@@ -72,9 +72,15 @@ bx=[zeros(SZ(1)*SZ(2)*SZ(3),1);alpha*diffmapx];
 by=[zeros(SZ(1)*SZ(2)*SZ(3),1);alpha*diffmapy];
 bz=[zeros(SZ(1)*SZ(2)*SZ(3),1);alpha*diffmapz];
 clear I X Y Z xmap
-diffmap(:,1)=mypcg(L'*L,L'*bx,1e-16,6000,diag(L'*L)+eps,[],'v2');
-diffmap(:,2)=mypcg(L'*L,L'*by,1e-16,6000,diag(L'*L)+eps,[],'v2');
-diffmap(:,3)=mypcg(L'*L,L'*bz,1e-16,6000,diag(L'*L)+eps,[],'v2');
+% diffmap(:,1)=mypcg(L'*L,L'*bx,1e-16,6000,diag(L'*L)+eps,[],'v2');
+% diffmap(:,2)=mypcg(L'*L,L'*by,1e-16,6000,diag(L'*L)+eps,[],'v2');
+% diffmap(:,3)=mypcg(L'*L,L'*bz,1e-16,6000,diag(L'*L)+eps,[],'v2');
+clear b
+b(:,1)=bx;b(:,2)=by;b(:,3)=bz;
+parfor kk=1:3
+    diffmap(:,kk)=mypcg(L'*L,L'*b(:,kk),1e-16,6000,diag(L'*L)+eps,[],'v2');
+
+end
 
 [X,Y,Z]=meshgrid(1:SZ(1),1:SZ(2),1:SZ(3));bw=b1v;
 bw.img=interp3(double(b1v.img),X+reshape(diffmap(:,2),SZ),Y+reshape(diffmap(:,1),SZ),Z+reshape(diffmap(:,3),SZ),'nearest');
