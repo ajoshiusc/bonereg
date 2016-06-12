@@ -35,13 +35,13 @@ for lab=labs'
     tic;    
         w.vertices = register_pointset_icp(b1.vertices,b2.vertices,b2.faces);
     toc
-   [k,d]=dsearchn(w.vertices,b1.vertices);
-   d=bone1.vertices-w.vertices(k,:);
-   d2(:,1)=smooth_surf_function(bone1,d(:,1),.8,.8);
-   d2(:,2)=smooth_surf_function(bone1,d(:,2),.8,.8);
-   d2(:,3)=smooth_surf_function(bone1,d(:,3),.8,.8);
+   [k,d]=dsearchn(b1.vertices,w.vertices);
+   d=b1.vertices(k,:)-w.vertices;
+   d2(:,1)=smooth_surf_function(b2,d(:,1),.8,.8);
+   d2(:,2)=smooth_surf_function(b2,d(:,2),.8,.8);
+   d2(:,3)=smooth_surf_function(b2,d(:,3),.8,.8);
   
-    def_sub_atlas=[def_sub_atlas;(w.vertices-b2.vertices)];
+    def_sub_atlas=[def_sub_atlas;(w.vertices-b2.vertices)+d2];
     sub2bonevert=[sub2bonevert;b2.vertices];      
 
 end
@@ -64,9 +64,9 @@ diffmapz=diffmap(known_ind,3);
 unknown_ind=setdiff(1:length(xmap(:)),known_ind);
 
 [~,~,L] = laplacian(SZ,{'NN','NN','NN'});
-
+save tmp121
 I=speye(SZ(1)*SZ(2)*SZ(3)); I=I(known_ind,:);
-alpha=1.000;
+alpha=10.00;
 L=[L;alpha*I];
 bx=[zeros(SZ(1)*SZ(2)*SZ(3),1);alpha*diffmapx];
 by=[zeros(SZ(1)*SZ(2)*SZ(3),1);alpha*diffmapy];
@@ -82,7 +82,7 @@ save_untouch_nii_gz(bw,[bone1(1:end-4),'_warped','.nii.gz']);
 view_nii(bw);
 view_nii(b2v)
 view_nii(b1v)
-save tmp21
+save tmp22
 bwvol.img=interp3(double(b1vol.img),X+reshape(diffmap(:,2),SZ),Y+reshape(diffmap(:,1),SZ),Z+reshape(diffmap(:,3),SZ));
 bwvol.hdr=b2vol.hdr;
 save_nii(bwvol,[bone1vol(1:end-4),'_warped','.nii.gz']);
