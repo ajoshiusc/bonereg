@@ -36,7 +36,7 @@ for lab=labs'
         w.vertices = register_pointset_icp(b1.vertices,b2.vertices,b2.faces);
     toc
    [k,d]=dsearchn(b1.vertices,w.vertices);
-   d=b1.vertices(k,:)-w.vertices;
+   d=b1.vertices(k,:)-w.vertices; clear d2
    d2(:,1)=smooth_surf_function(b2,d(:,1),.8,.8);
    d2(:,2)=smooth_surf_function(b2,d(:,2),.8,.8);
    d2(:,3)=smooth_surf_function(b2,d(:,3),.8,.8);
