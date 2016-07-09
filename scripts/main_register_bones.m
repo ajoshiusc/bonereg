@@ -3,11 +3,11 @@ restoredefaultpath;
 addpath(genpath('..\src'));
 
 %bone 1 gets warped
-bone1=['C:\Users\ajoshi\Google Drive\MRI and Ground Truth Images\Volunteer4_GroundTruth.nii.gz'];
-bone2=['C:\Users\ajoshi\Google Drive\MRI and Ground Truth Images\Volunteer2_GroundTruth.nii.gz'];
-bone1vol=['C:\Users\ajoshi\Google Drive\MRI and Ground Truth Images\Volunteer4_VIBE_we.nii.gz'];
-bone2vol=['C:\Users\ajoshi\Google Drive\MRI and Ground Truth Images\Volunteer2_VIBE_we.nii.gz'];
-generate_surfaces(bone1);
+bone1=['C:\\Users\ajoshi\\Google Drive\\MRI Segmentation Dataset\\Healthy Men\\Volunteer2_TM_Study_mask.nii.gz'];
+bone2=['C:\\Users\ajoshi\\Google Drive\\MRI Segmentation Dataset\\Healthy Men\\Volunteer2_OA_Study_mask.nii.gz'];
+bone1vol=['C:\\Users\ajoshi\\Google Drive\\MRI Segmentation Dataset\\Healthy Men\\Volunteer2_TM_Study.nii.gz'];
+bone2vol=['C:\\Users\ajoshi\\Google Drive\\MRI Segmentation Dataset\\Healthy Men\\Volunteer2_OA_Study.nii.gz'];
+%generate_surfaces(bone1);
 %generate_surfaces(bone2);
 
 b1=load_untouch_nii_gz(bone1);
@@ -29,6 +29,9 @@ X=(X-1)*res(1);Y=(Y-1)*res(2);Z=(Z-1)*res(3);labs=setdiff(unique(b1.img),0);
 sub2bonevert=[];def_sub_atlas=[];
 for lab=labs'
     
+    if ~exist([bone1(1:end-7),sprintf('bone%d.dfs',lab)],'file') || ~exist([bone2(1:end-7),sprintf('bone%d.dfs',lab)],'file') 
+        continue;
+    end
     b1=readdfs([bone1(1:end-7),sprintf('bone%d.dfs',lab)]);
     b2=readdfs([bone2(1:end-7),sprintf('bone%d.dfs',lab)]);
 

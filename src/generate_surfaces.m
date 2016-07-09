@@ -11,6 +11,9 @@ for lab=labs'
     b1img=smooth3(b1img,'gaussian',[9,9,9],1.5);
     s1sm=isosurface(X, Y, Z, b1img,.5);
     s1sm=reducepatch(s1sm,10000);
+    if (length(s1sm.faces)<100)
+        continue;
+    end
     s1sm=myclean_patch_cc(s1sm);
     s1sm=smooth_cortex_fast(s1sm,.1,1);
     view_patch(s1sm);
